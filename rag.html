@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>RAG Simulator</title>
+
+<style>
+    *{
+        margin:0;
+        padding:0;
+        box-sizing:border-box;
+        font-family: Inter, Arial, sans-serif;
+    }
+
+    body{
+        background:#0f172a;
+        color:white;
+        min-height:100vh;
+        padding:30px;
+        overflow-x:hidden;
+    }
+
+    h1{
+        font-size:42px;
+        margin-bottom:10px;
+        font-weight:800;
+    }
+
+    .subtitle{
+        color:#94a3b8;
+        margin-bottom:30px;
+        line-height:1.6;
+    }
+
+    .main-grid{
+        display:grid;
+        grid-template-columns: 1.1fr 1fr;
+        gap:25px;
+    }
+
+    .card{
+        background:rgba(255,255,255,0.05);
+        border:1px solid rgba(255,255,255,0.08);
+        border-radius:24px;
+        padding:24px;
+        backdrop-filter: blur(10px);
+        box-shadow:0 10px 30px rgba(0,0,0,0.25);
+    }
+
+    .card h2{
+        margin-bottom:16px;
+        font-size:22px;
+    }
+
+    textarea{
+        width:100%;
+        min-height:220px;
+        background:#111827;
+        color:white;
+        border:none;
+        outline:none;
+        border-radius:18px;
+        padding:18px;
+        resize:vertical;
+        line-height:1.6;
+        font-size:15px;
+    }
+
+    button{
+        margin-top:18px;
+        background:linear-gradient(135deg,#6366f1,#8b5cf6);
+        border:none;
+        color:white;
+        padding:14px 22px;
+        border-radius:14px;
+        cursor:pointer;
+        font-weight:700;
+        transition:0.25s;
+    }
+
+    button:hover{
+        transform:translateY(-2px);
+        opacity:0.95;
+    }
+
+    .pipeline{
+        display:flex;
+        flex-direction:column;
+        gap:16px;
+    }
+
+    .step{
+        background:#111827;
+        border-radius:18px;
+        padding:18px;
+        border-left:5px solid #6366f1;
+        transition:0.3s;
+        opacity:0.5;
+    }
+
+    .step.active{
+        opacity:1;
+        transform:scale(1.02);
+        box-shadow:0 0 20px rgba(99,102,241,0.35);
+    }
+
+    .step-title{
+        font-size:18px;
+        margin-bottom:10px;
+        font-weight:700;
+    }
+
+    .step-content{
+        color:#cbd5e1;
+        line-height:1.6;
+        font-size:14px;
+    }
+
+    .query-box{
+        margin-top:22px;
+    }
+
+    input{
+        width:100%;
+        margin-top:10px;
+        padding:14px;
+        border-radius:14px;
+        border:none;
+        outline:none;
+        background:#111827;
+        color:white;
+        font-size:15px;
+    }
+
+    .answer{
+        margin-top:20px;
+        background:#111827;
+        padding:18px;
+        border-radius:18px;
+        line-height:1.8;
+        border:1px solid rgba(255,255,255,0.06);
+    }
+
+    .chunk{
+        background:#1e293b;
+        padding:10px;
+        margin-top:10px;
+        border-radius:12px;
+        font-size:13px;
+        color:#dbeafe;
+    }
+
+    .embedding{
+        color:#67e8f9;
+        font-size:12px;
+        margin-top:8px;
+        word-break:break-word;
+    }
+
+    .architecture{
+        margin-top:25px;
+        display:flex;
+        justify-content:space-between;
+        gap:12px;
+        flex-wrap:wrap;
+    }
+
+    .arch-box{
+        flex:1;
+        min-width:120px;
+        background:#111827;
+        padding:18px;
+        border-radius:18px;
+        text-align:center;
+        border:1px solid rgba(255,255,255,0.05);
+    }
+
+    .arch-box h3{
+        margin-bottom:8px;
+    }
+
+    .tag{
+        display:inline-block;
+        margin-top:10px;
+        background:#312e81;
+        padding:5px 10px;
+        border-radius:999px;
+        font-size:12px;
+    }
+
+    @media(max-width:900px){
+        .main-grid{
+            grid-template-columns:1fr;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<h1>RAG Simulator</h1>
+
+<p class="subtitle">
+Understand how Retrieval-Augmented Generation works internally.<br>
+This simulator demonstrates:
+chunking → embeddings → vector search → retrieval → prompt augmentation → LLM response.
+</p>
+
+<div class="main-grid">
+
+    <!-- LEFT -->
+    <div class="card">
+        <h2>📄 Insert Documents</h2>
+
+        <textarea id="documents">
+Seclore supports SSO integration with Azure AD and Okta.
+
+To configure SSO, admin must upload metadata XML file.
+
+Offline permissions allow documents to remain accessible for 5 days during outage.
+
+Vector databases store embeddings for semantic similarity search.
+
+RAG systems retrieve relevant chunks before sending prompt to LLM.
+        </textarea>
+
+        <button onclick="processDocuments()">
+            Process Documents Into RAG Pipeline
+        </button>
+
+        <div class="query-box">
+            <h2>🔍 Ask Question</h2>
+
+            <input 
+                id="queryInput"
+                placeholder="Example: How does offline permission work?"
+            />
+
+            <button onclick="runRAG()">
+                Run RAG Query
+            </button>
+        </div>
+
+        <div class="architecture">
+
+            <div class="arch-box">
+                <h3>LLM</h3>
+                <p>GPT / Claude / Llama</p>
+                <div class="tag">Reasoning</div>
+            </div>
+
+            <div class="arch-box">
+                <h3>RAG Layer</h3>
+                <p>Retriever + Vector DB</p>
+                <div class="tag">Search</div>
+            </div>
+
+            <div class="arch-box">
+                <h3>Application</h3>
+                <p>Backend + UI</p>
+                <div class="tag">Orchestration</div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT -->
+    <div class="card">
+        <h2>⚡ RAG Pipeline Visualization</h2>
+
+        <div class="pipeline">
+
+            <div class="step" id="step1">
+                <div class="step-title">1. Document Chunking</div>
+                <div class="step-content" id="chunkOutput">
+                    Waiting for documents...
+                </div>
+            </div>
+
+            <div class="step" id="step2">
+                <div class="step-title">2. Embedding Generation</div>
+                <div class="step-content" id="embeddingOutput">
+                    Embeddings will appear here...
+                </div>
+            </div>
+
+            <div class="step" id="step3">
+                <div class="step-title">3. Query Embedding</div>
+                <div class="step-content" id="queryEmbeddingOutput">
+                    Query vector representation...
+                </div>
+            </div>
+
+            <div class="step" id="step4">
+                <div class="step-title">4. Similarity Search</div>
+                <div class="step-content" id="retrievalOutput">
+                    Retrieved chunks appear here...
+                </div>
+            </div>
+
+            <div class="step" id="step5">
+                <div class="step-title">5. Prompt Augmentation</div>
+                <div class="step-content" id="promptOutput">
+                    Final prompt sent to LLM...
+                </div>
+            </div>
+
+            <div class="step" id="step6">
+                <div class="step-title">6. LLM Final Response</div>
+                <div class="step-content answer" id="answerOutput">
+                    Final answer generated by LLM...
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+let chunks = [];
+let embeddings = [];
+
+function activateStep(stepId){
+    document.querySelectorAll(".step").forEach(step=>{
+        step.classList.remove("active");
+    });
+
+    document.getElementById(stepId).classList.add("active");
+}
+
+function fakeEmbedding(text){
+    return Array.from(text)
+        .slice(0,15)
+        .map(c => c.charCodeAt(0) % 10)
+        .join("-");
+}
+
+function processDocuments(){
+
+    activateStep("step1");
+
+    const text = document.getElementById("documents").value;
+
+    chunks = text
+        .split(".")
+        .map(c => c.trim())
+        .filter(c => c.length > 0);
+
+    let chunkHTML = "";
+
+    chunks.forEach((chunk,index)=>{
+        chunkHTML += `
+            <div class="chunk">
+                Chunk ${index+1}: ${chunk}
+            </div>
+        `;
+    });
+
+    document.getElementById("chunkOutput").innerHTML = chunkHTML;
+
+    setTimeout(()=>{
+
+        activateStep("step2");
+
+        embeddings = chunks.map(chunk => ({
+            text: chunk,
+            vector: fakeEmbedding(chunk)
+        }));
+
+        let embeddingHTML = "";
+
+        embeddings.forEach((e,index)=>{
+            embeddingHTML += `
+                <div class="chunk">
+                    Chunk ${index+1}
+                    <div class="embedding">
+                        Vector Embedding:
+                        [${e.vector}]
+                    </div>
+                </div>
+            `;
+        });
+
+        document.getElementById("embeddingOutput").innerHTML = embeddingHTML;
+
+    },1200);
+
+}
+
+function runRAG(){
+
+    const query = document.getElementById("queryInput").value;
+
+    if(!query){
+        alert("Please enter a query.");
+        return;
+    }
+
+    activateStep("step3");
+
+    const queryEmbedding = fakeEmbedding(query);
+
+    document.getElementById("queryEmbeddingOutput").innerHTML = `
+        User Query:
+        <div class="chunk">${query}</div>
+
+        <div class="embedding">
+            Query Embedding:
+            [${queryEmbedding}]
+        </div>
+    `;
+
+    setTimeout(()=>{
+
+        activateStep("step4");
+
+        const matchedChunks = chunks.filter(chunk => {
+
+            const queryWords = query.toLowerCase().split(" ");
+
+            return queryWords.some(word =>
+                chunk.toLowerCase().includes(word)
+            );
+
+        });
+
+        let retrievalHTML = "";
+
+        matchedChunks.forEach(chunk=>{
+            retrievalHTML += `
+                <div class="chunk">
+                    Retrieved Chunk:
+                    <br><br>
+                    ${chunk}
+                </div>
+            `;
+        });
+
+        if(matchedChunks.length === 0){
+            retrievalHTML = `
+                <div class="chunk">
+                    No highly relevant chunk found.
+                </div>
+            `;
+        }
+
+        document.getElementById("retrievalOutput").innerHTML = retrievalHTML;
+
+        setTimeout(()=>{
+
+            activateStep("step5");
+
+            const finalPrompt = `
+You are an AI assistant.
+
+Use the following retrieved context:
+
+${matchedChunks.join("\n")}
+
+User Question:
+${query}
+            `;
+
+            document.getElementById("promptOutput").innerHTML = `
+                <div class="chunk">
+                    ${finalPrompt.replace(/\n/g,"<br>")}
+                </div>
+            `;
+
+            setTimeout(()=>{
+
+                activateStep("step6");
+
+                let answer = "";
+
+                if(matchedChunks.length > 0){
+
+                    answer = `
+                        The LLM generated this answer using retrieved chunks from the vector database.
+
+                        <br><br>
+
+                        <strong>Answer:</strong><br>
+                        Based on retrieved context:
+                        <br><br>
+
+                        "${matchedChunks[0]}"
+                    `;
+
+                } else {
+
+                    answer = `
+                        No relevant chunk was retrieved.
+
+                        <br><br>
+
+                        In real systems:
+                        <ul style="margin-top:10px;padding-left:20px;">
+                            <li>LLM may hallucinate</li>
+                            <li>Retriever may fail</li>
+                            <li>Reranking may help</li>
+                        </ul>
+                    `;
+                }
+
+                document.getElementById("answerOutput").innerHTML = answer;
+
+            },1200);
+
+        },1200);
+
+    },1200);
+
+}
+
+</script>
+
+</body>
+</html>
