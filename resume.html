@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gunatav Kapoor | Futuristic Resume</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      scroll-behavior: smooth;
+    }
+
+    :root {
+      --bg: #070b14;
+      --card: rgba(15, 23, 42, 0.7);
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+      --primary: #38bdf8;
+      --secondary: #8b5cf6;
+      --border: rgba(255,255,255,0.08);
+      --glow: 0 0 25px rgba(56, 189, 248, 0.25);
+    }
+
+    body {
+      font-family: 'Space Grotesk', sans-serif;
+      background: radial-gradient(circle at top right, rgba(56,189,248,0.15), transparent 30%),
+                  radial-gradient(circle at bottom left, rgba(139,92,246,0.15), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .container {
+      width: min(1200px, 92%);
+      margin: auto;
+      padding: 50px 0;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.3fr 0.7fr;
+      gap: 30px;
+      align-items: center;
+      min-height: 90vh;
+    }
+
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      padding: 30px;
+      box-shadow: var(--glow);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 999px;
+      background: rgba(56,189,248,0.12);
+      border: 1px solid rgba(56,189,248,0.3);
+      color: var(--primary);
+      margin-bottom: 20px;
+      font-size: 0.9rem;
+      letter-spacing: 0.5px;
+    }
+
+    h1 {
+      font-size: 5rem;
+      line-height: 1;
+      margin-bottom: 18px;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      color: var(--muted);
+      line-height: 1.8;
+      font-size: 1.08rem;
+      max-width: 700px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 30px;
+    }
+
+    .stat {
+      padding: 18px;
+      border-radius: 18px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      transition: 0.3s ease;
+    }
+
+    .stat:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--glow);
+    }
+
+    .stat h2 {
+      font-size: 2rem;
+      color: var(--primary);
+    }
+
+    .stat p {
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+
+    .orb {
+      width: 100%;
+      aspect-ratio: 1/1;
+      border-radius: 50%;
+      position: relative;
+      background: radial-gradient(circle at center, rgba(56,189,248,0.4), transparent 60%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      animation: float 5s ease-in-out infinite;
+    }
+
+    .orb::before,
+    .orb::after {
+      content: "";
+      position: absolute;
+      inset: 10%;
+      border: 1px solid rgba(56,189,248,0.2);
+      border-radius: 50%;
+    }
+
+    .orb::after {
+      inset: 20%;
+      border-color: rgba(139,92,246,0.3);
+    }
+
+    .orb-content {
+      text-align: center;
+      z-index: 2;
+    }
+
+    .orb-content h2 {
+      font-size: 2rem;
+      margin-bottom: 8px;
+    }
+
+    .orb-content p {
+      color: var(--muted);
+    }
+
+    section {
+      margin-top: 60px;
+    }
+
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 40px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+    }
+
+    .timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .timeline-item {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timeline-item::before {
+      content: "";
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(var(--primary), var(--secondary));
+    }
+
+    .timeline-item h3 {
+      font-size: 1.4rem;
+      margin-bottom: 6px;
+    }
+
+    .timeline-item .company {
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: inline-block;
+    }
+
+    .timeline-item p {
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+    }
+
+    .skill-card ul {
+      margin-top: 14px;
+      list-style: none;
+    }
+
+    .skill-card li {
+      padding: 8px 0;
+      color: var(--muted);
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .skill-card li:last-child {
+      border-bottom: none;
+    }
+
+    .footer {
+      text-align: center;
+      margin: 80px 0 30px;
+      color: var(--muted);
+    }
+
+    .cta {
+      margin-top: 25px;
+      display: flex;
+      gap: 15px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 14px 24px;
+      border-radius: 14px;
+      border: none;
+      cursor: pointer;
+      font-family: inherit;
+      font-weight: 600;
+      transition: 0.3s ease;
+    }
+
+    .primary {
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      color: white;
+    }
+
+    .secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+
+    .btn:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--glow);
+    }
+
+    @keyframes float {
+      0%,100% { transform: translateY(0px); }
+      50% { transform: translateY(-15px); }
+    }
+
+    @media(max-width: 900px) {
+      .hero {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 3.5rem;
+      }
+
+      .stats {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <section class="hero">
+      <div class="glass">
+        <div class="badge">PRODUCT • CYBERSECURITY • AI • CONSULTING</div>
+        <h1>Gunatav <span>Kapoor</span></h1>
+
+        <p>
+          Solution Consultant with expertise in cybersecurity, product adoption, enterprise customer engagement, and AI-driven process optimization.
+          Passionate about building scalable customer experiences, bridging technical and business teams, and evolving toward strategic product leadership.
+        </p>
+
+        <div class="cta">
+          <button class="btn primary" onclick="downloadResume()">Download Resume</button>
+          <button class="btn secondary" onclick="scrollToSection('experience')">Explore Journey</button>
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <h2>37</h2>
+            <p>Enterprise Accounts Managed</p>
+          </div>
+          <div class="stat">
+            <h2>1+</h2>
+            <p>Years at Seclore</p>
+          </div>
+          <div class="stat">
+            <h2>ISC2</h2>
+            <p>Certified in Cybersecurity (CC)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="orb glass">
+        <div class="orb-content">
+          <h2>Future Focus</h2>
+          <p>AI + Product Strategy + Cybersecurity</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="experience">
+      <h2 class="section-title">Professional Experience</h2>
+
+      <div class="timeline">
+        <div class="timeline-item glass">
+          <h3>Solution Consultant</h3>
+          <span class="company">Seclore</span>
+          <p>
+            Driving enterprise customer success, product adoption, and cybersecurity solution enablement across India and the Middle East.
+            Managed 37 customer accounts while contributing to internal SOP development, use case repositories, dashboarding initiatives,
+            and process optimization programs.
+          </p>
+        </div>
+
+        <div class="timeline-item glass">
+          <h3>Product & Customer Experience Initiatives</h3>
+          <span class="company">Strategic Contributions</span>
+          <p>
+            Worked on improving operational efficiency through reporting automation, SC forum tracking, customer training enablement,
+            and AI-driven knowledge sharing concepts. Exploring the intersection of AI, product management, and enterprise security.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Core Expertise</h2>
+
+      <div class="skills-grid">
+        <div class="skill-card glass">
+          <h3>Cybersecurity</h3>
+          <ul>
+            <li>Information Protection</li>
+            <li>Enterprise Security</li>
+            <li>Customer Security Consulting</li>
+            <li>ISC2 CC Certified</li>
+          </ul>
+        </div>
+
+        <div class="skill-card glass">
+          <h3>Product & Strategy</h3>
+          <ul>
+            <li>Product Adoption</li>
+            <li>Stakeholder Management</li>
+            <li>Customer Journey Optimization</li>
+            <li>Strategic Thinking</li>
+          </ul>
+        </div>
+
+        <div class="skill-card glass">
+          <h3>AI & Innovation</h3>
+          <ul>
+            <li>AI Workflow Ideation</li>
+            <li>Training Automation</li>
+            <li>LLM & RAG Understanding</li>
+            <li>Process Optimization</li>
+          </ul>
+        </div>
+
+        <div class="skill-card glass">
+          <h3>Business Skills</h3>
+          <ul>
+            <li>Enterprise Communication</li>
+            <li>Cross-functional Collaboration</li>
+            <li>Presentation & Enablement</li>
+            <li>Consultative Selling</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Career Vision</h2>
+
+      <div class="glass">
+        <p style="line-height: 1.9; color: var(--muted); font-size: 1.05rem;">
+          My long-term goal is to evolve into a strategic leadership role in a product-driven organization, combining deep technical understanding,
+          customer empathy, cybersecurity expertise, and AI-enabled innovation. I enjoy transforming complex enterprise challenges into scalable,
+          user-focused solutions.
+        </p>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Education & Certifications</h2>
+
+      <div class="skills-grid">
+        <div class="glass">
+          <h3>MBA</h3>
+          <p style="margin-top:10px; color: var(--muted);">Business & Strategic Management Foundation</p>
+        </div>
+
+        <div class="glass">
+          <h3>ISC2 CC</h3>
+          <p style="margin-top:10px; color: var(--muted);">Certified in Cybersecurity</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      <p>Designed with a futuristic cyber aesthetic • 2026</p>
+    </div>
+
+  </div>
+
+  <script>
+    function scrollToSection(id) {
+      document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function downloadResume() {
+      const element = document.documentElement.outerHTML;
+      const blob = new Blob([element], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Gunatav_Kapoor_Futuristic_Resume.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      URL.revokeObjectURL(url);
+    }
+
+    // Dynamic glow cursor effect
+    const glow = document.createElement('div');
+    glow.style.position = 'fixed';
+    glow.style.width = '300px';
+    glow.style.height = '300px';
+    glow.style.borderRadius = '50%';
+    glow.style.pointerEvents = 'none';
+    glow.style.background = 'radial-gradient(circle, rgba(56,189,248,0.12), transparent 60%)';
+    glow.style.transform = 'translate(-50%, -50%)';
+    glow.style.zIndex = '-1';
+    document.body.appendChild(glow);
+
+    document.addEventListener('mousemove', (e) => {
+      glow.style.left = e.clientX + 'px';
+      glow.style.top = e.clientY + 'px';
+    });
+  </script>
+</body>
+</html>
